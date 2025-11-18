@@ -1,0 +1,31 @@
+{
+  "name": "@docs/cli",
+  "version": "1.0.0",
+  "description": "CLI tool for syncing documentation to the Enterprise Documentation System",
+  "main": "dist/index.js",
+  "bin": {
+    "docs-cli": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc && chmod +x dist/index.js",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@docs/shared": "*",
+    "commander": "^11.1.0",
+    "axios": "^1.6.5",
+    "archiver": "^6.0.1",
+    "gray-matter": "^4.0.3",
+    "chalk": "^4.1.2",
+    "ora": "^5.4.1",
+    "prompts": "^2.4.2",
+    "glob": "^10.3.10"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.6",
+    "@types/archiver": "^6.0.2",
+    "@types/prompts": "^2.4.9",
+    "typescript": "^5.3.3"
+  }
+}
