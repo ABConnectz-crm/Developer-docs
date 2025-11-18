@@ -2,6 +2,8 @@ import {
   Controller,
   Post,
   Get,
+  Put,
+  Delete,
   Query,
   Param,
   Body,
@@ -185,6 +187,64 @@ export class DocsController {
       this.logger.error(`Export failed: ${error.message}`);
       throw new HttpException(
         `Export failed: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  /**
+   * Update document content
+   * PUT /api/docs/:documentId
+   */
+  @Put(':documentId')
+  async updateDocument(
+    @Param('documentId') documentId: string,
+    @Body('content') content: string,
+    @Body('frontmatter') frontmatter?: Record<string, any>,
+    @Body('versionTag') versionTag?: string,
+  ) {
+    if (!content) {
+      throw new HttpException('Content is required', HttpStatus.BAD_REQUEST);
+    }
+
+    try {
+      const result = await this.docsService.updateDocument(
+        documentId,
+        content,
+        frontmatter || {},
+        versionTag || 'HEAD',
+      );
+
+      return {
+        success: true,
+        data: result,
+      };
+    } catch (error) {
+      this.logger.error(`Update failed: ${error.message}`);
+      throw new HttpException(
+        `Update failed: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  /**
+   * Delete document
+   * DELETE /api/docs/:documentId
+   */
+  @Delete(':documentId')
+  async deleteDocument(@Param('documentId') documentId: string) {
+    try {
+      await this.docsService.deleteDocument(documentId);
+
+      return {
+        success: true,
+        message: 'Document deleted successfully',
+      };
+    } catch (error) {
+      this.logger.error(`Delete failed: ${error.message}`);
+      throw new HttpException(
+        `Delete failed: ${error.message}`,
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }

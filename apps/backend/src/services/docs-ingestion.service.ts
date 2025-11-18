@@ -321,4 +321,66 @@ export class DocsIngestionService {
 
     return results;
   }
+
+  /**
+   * Update document content
+   */
+  async updateDocument(
+    documentId: string,
+    content: string,
+    frontmatter: Record<string, any>,
+    versionTag: string = 'HEAD',
+  ): Promise<any> {
+    const document = await this.documentRepo.findOne({
+      where: { id: documentId },
+    });
+
+    if (!document) {
+      throw new Error('Document not found');
+    }
+
+    // Update document metadata if provided in frontmatter
+    if (frontmatter.title) {
+      document.title = frontmatter.title;
+    }
+    if (frontmatter.order !== undefined) {
+      document.orderIndex = frontmatter.order;
+    }
+    await this.documentRepo.save(document);
+
+    // Calculate content hash
+    const contentHash = this.calculateHash(content);
+
+    // Create new content version
+    const version = this.contentVersionRepo.create({
+      documentId: document.id,
+      versionTag,
+      contentMd: content,
+      frontmatter,
+      contentHash,
+    });
+
+    await this.contentVersionRepo.save(version);
+
+    this.logger.log(`Updated document: ${document.path}`);
+
+    return this.getDocumentById(documentId);
+  }
+
+  /**
+   * Delete document and all its versions
+   */
+  async deleteDocument(documentId: string): Promise<void> {
+    const document = await this.documentRepo.findOne({
+      where: { id: documentId },
+    });
+
+    if (!document) {
+      throw new Error('Document not found');
+    }
+
+    await this.documentRepo.remove(document);
+
+    this.logger.log(`Deleted document: ${document.path}`);
+  }
 }
