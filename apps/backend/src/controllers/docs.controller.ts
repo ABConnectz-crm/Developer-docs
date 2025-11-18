@@ -19,7 +19,7 @@ import { Response } from 'express';
 import { DocsIngestionService } from '../services/docs-ingestion.service';
 import { ExportService, ExportOptions } from '../services/export.service';
 
-@Controller('api/docs')
+@Controller('docs')
 export class DocsController {
   private readonly logger = new Logger(DocsController.name);
 

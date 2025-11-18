@@ -38,6 +38,9 @@ function NavigationItem({ node, currentPath, level }: NavigationItemProps) {
   const hasChildren = node.children && node.children.length > 0;
   const isActive = currentPath === node.path;
 
+  // Convert ltree path (dots) to URL path (slashes)
+  const urlPath = node.path.replace(/\./g, '/');
+
   return (
     <div className="mb-1">
       <div
@@ -62,7 +65,7 @@ function NavigationItem({ node, currentPath, level }: NavigationItemProps) {
           </button>
         )}
         {!hasChildren && <FileText size={14} className="text-slate-400 dark:text-slate-500" />}
-        <Link href={`/docs/${node.path}`} className="flex-1">
+        <Link href={`/docs/${urlPath}`} className="flex-1">
           {node.title}
         </Link>
       </div>

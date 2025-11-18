@@ -87,27 +87,31 @@ export function SearchBar({ projectId }: SearchBarProps) {
             </div>
           ) : results.length > 0 ? (
             <div className="py-2">
-              {results.map((result) => (
-                <Link
-                  key={result.id}
-                  href={`/docs/${result.path}`}
-                  onClick={() => setIsOpen(false)}
-                  className="block px-4 py-3 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
-                >
+              {results.map((result) => {
+                // Convert ltree path (dots) to URL path (slashes)
+                const urlPath = result.path.replace(/\./g, '/');
+                return (
+                  <Link
+                    key={result.id}
+                    href={`/docs/${urlPath}`}
+                    onClick={() => setIsOpen(false)}
+                    className="block px-4 py-3 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                  >
                   <div className="font-medium text-slate-900 dark:text-slate-100">
                     {result.title}
                   </div>
                   <div className="text-sm text-slate-600 dark:text-slate-400 mt-1">
                     {result.path}
                   </div>
-                  {result.snippet && (
-                    <div
-                      className="text-sm text-slate-500 dark:text-slate-500 mt-1 line-clamp-2"
-                      dangerouslySetInnerHTML={{ __html: result.snippet }}
-                    />
-                  )}
-                </Link>
-              ))}
+                    {result.snippet && (
+                      <div
+                        className="text-sm text-slate-500 dark:text-slate-500 mt-1 line-clamp-2"
+                        dangerouslySetInnerHTML={{ __html: result.snippet }}
+                      />
+                    )}
+                  </Link>
+                );
+              })}
             </div>
           ) : (
             <div className="p-4 text-center text-slate-500 dark:text-slate-400">

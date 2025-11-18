@@ -48,3 +48,44 @@ export async function exportDocument(
   );
   return response.data;
 }
+
+export async function updateDocument(
+  documentId: string,
+  content: string,
+  frontmatter?: Record<string, any>,
+  versionTag?: string,
+): Promise<DocumentWithContent> {
+  const response = await api.put(`/docs/${documentId}`, {
+    content,
+    frontmatter,
+    versionTag,
+  });
+  return response.data.data;
+}
+
+export async function deleteDocument(documentId: string): Promise<void> {
+  await api.delete(`/docs/${documentId}`);
+}
+
+export async function uploadDocuments(
+  file: File,
+  projectId: string,
+  versionTag: string = 'HEAD',
+): Promise<{
+  created: number;
+  updated: number;
+  deleted: number;
+  errors: Array<{ file: string; error: string }>;
+}> {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('projectId', projectId);
+  formData.append('versionTag', versionTag);
+
+  const response = await api.post('/docs/upload', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return response.data.result;
+}
